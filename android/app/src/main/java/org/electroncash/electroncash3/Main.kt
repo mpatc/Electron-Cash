@@ -233,6 +233,7 @@ class MainActivity : AppCompatActivity(R.layout.main) {
             }
             R.id.menuChangePassword -> showDialog(this, PasswordChangeDialog())
             R.id.menuShowSeed-> { showDialog(this, SeedPasswordDialog()) }
+            R.id.menuExportSigned-> { showDialog(this, ColdSendDialog()) }
             R.id.menuRename -> showDialog(this, WalletRenameDialog().apply {
                 arguments = Bundle().apply { putString("walletName", daemonModel.walletName) }
             })
