@@ -45,7 +45,7 @@ class ColdSendDialog : AlertDialogFragment() {
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        builder.setTitle(R.string.send)
+        builder.setTitle(R.string.sign_unbroadcasted)
                 .setView(R.layout.send)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, null)
@@ -288,9 +288,6 @@ class ColdSendPasswordDialog : PasswordDialog<Unit>() {
 
         val wallet = daemonModel.wallet!!
         wallet.callAttr("sign_transaction", model.tx, password)
-
-
-
 
     }
 

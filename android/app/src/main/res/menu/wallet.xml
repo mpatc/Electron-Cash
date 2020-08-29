@@ -25,7 +25,6 @@
         android:icon="@drawable/ic_key_24dp"
         android:title="@string/sign_unbroadcasted"/>
 
-
     <item
         android:id="@+id/menuRename"
         android:icon="@drawable/ic_edit_24dp"
