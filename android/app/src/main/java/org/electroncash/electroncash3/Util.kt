@@ -100,6 +100,8 @@ fun copyToClipboard(text: CharSequence, what: Int? = null) {
 
 
 
+
+
 fun <T: Any> getSystemService(kcls: KClass<T>): T {
     return ContextCompat.getSystemService(app, kcls.java)!!
 }

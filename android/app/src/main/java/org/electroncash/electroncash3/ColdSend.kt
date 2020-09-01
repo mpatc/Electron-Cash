@@ -21,6 +21,9 @@ import kotlinx.android.synthetic.main.send.*
 import java.io.File
 import kotlin.properties.Delegates.notNull
 
+// This is to create a valid transaction that is not broadcasted
+// Instead, it the raw hex is copied to clipboard, to be broadcasted at users leisure
+
 
 val libColdPaymentRequest by lazy { libMod("paymentrequest") }
 
