@@ -21,7 +21,7 @@ class ColdLoadDialog : AlertDialogFragment() {
 
     class Model : ViewModel() {}
 
-//    val coldloadDialog by lazy { targetFragment as ColdLoadDialog }
+    //    val coldloadDialog by lazy { targetFragment as ColdLoadDialog }
     val model: Model by viewModels()
 
 
@@ -43,14 +43,10 @@ class ColdLoadDialog : AlertDialogFragment() {
                 .setNeutralButton(R.string.qr_code, null)
                 .setPositiveButton(android.R.string.ok, null)
     }
-    // This waits for user to click ok, and then broadcasts the user input which
-    // hopefully its a hexadecimal representation of a signed tx, in which case it gets
-    // broadcast in onOK() todo user validate input
+
     override fun onShowDialog() {
         super.onShowDialog()
         val ourClipboard = getSystemService(ClipboardManager::class)
-
-
 
         etTransaction.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -58,7 +54,7 @@ class ColdLoadDialog : AlertDialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 val currenttext = etTransaction.text
                 //checks if text is blank. further validations can be added here
-                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = when { currenttext.isNotBlank() -> {true} else -> false }
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = when { currenttext.isNotBlank() -> {true} else -> false }
             }
 
         })
