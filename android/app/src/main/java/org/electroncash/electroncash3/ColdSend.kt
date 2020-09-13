@@ -51,7 +51,7 @@ class ColdSendDialog : AlertDialogFragment() {
         builder.setTitle(R.string.sign_transaction)
                 .setView(R.layout.send)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, null)
+                .setPositiveButton(R.string.sign, null)
                 .setNeutralButton(R.string.qr_code, null)
     }
 
