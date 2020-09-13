@@ -60,16 +60,12 @@ class ColdLoadDialog : AlertDialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null && result.contents != null) {
-            onScan(result.contents)
+            etTransaction.setText(result.contents)
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    fun onScan(uri: String) {
-
-        etTransaction.setText(uri)
-    }
 
     fun onOK() {
         // try to send user input to network to be broadcast,
