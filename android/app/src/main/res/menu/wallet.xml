@@ -23,12 +23,12 @@
     <item
         android:id="@+id/menuExportSigned"
         android:icon="@drawable/ic_key_24dp"
-        android:title="@string/sign_unbroadcasted"/>
+        android:title="@string/sign_transaction"/>
 
     <item
         android:id="@+id/menuLoadSigned"
         android:icon="@drawable/ic_key_24dp"
-        android:title="@string/load_unbroadcasted"/>
+        android:title="@string/load_transaction"/>
 
 
     <item

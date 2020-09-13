@@ -48,7 +48,7 @@ class ColdSendDialog : AlertDialogFragment() {
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        builder.setTitle(R.string.sign_unbroadcasted)
+        builder.setTitle(R.string.sign_transaction)
                 .setView(R.layout.send)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, null)
@@ -298,7 +298,7 @@ class ColdSendPasswordDialog : PasswordDialog<Unit>() {
 
     override fun onPostExecute(result: Unit) {
         coldsendDialog.dismiss()
-        copyToClipboard(model.tx.toString(), R.string.the_signed)
+        copyToClipboard(model.tx.toString(), R.string.signed_transaction)
 
     }
 }

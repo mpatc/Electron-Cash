@@ -13,35 +13,22 @@ import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.load.*
 import kotlinx.android.synthetic.main.main.*
 
-// This provides a dialog to allow users to input a sting, which is then broadcast
-// on the bitcoin cash network. Strings are not validated, so invalid user inputs fail
-// gracefully and nothing happens. Valid transactoin quickly show up in transactions.
+// This provides a dialog to allow users to input a string, which is then broadcast
+// on the bitcoin cash network. Strings are not validated, but broadcast_transaction2 should throw error which is toasted.
+// Valid transaction quickly show up in transactions.
 
 class ColdLoadDialog : AlertDialogFragment() {
 
     class Model : ViewModel() {}
 
-    //    val coldloadDialog by lazy { targetFragment as ColdLoadDialog }
     val model: Model by viewModels()
 
-
-    init {
-        if (daemonModel.wallet!!.callAttr("is_watching_only").toBoolean()) {
-            throw ToastException(R.string.this_wallet_is)
-        } else if (daemonModel.wallet!!.callAttr("get_receiving_addresses")
-                        .asList().isEmpty()) {
-            // At least one receiving address is needed to call wallet.dummy_address.
-            throw ToastException(
-                    R.string.electron_cash_is_generating_your_addresses__please_wait_)
-        }
-    }
-
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        builder.setTitle(R.string.load_unbroadcasted)
+        builder.setTitle(R.string.load_transaction)
                 .setView(R.layout.load)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setNeutralButton(R.string.qr_code, null)
-                .setPositiveButton(android.R.string.ok, null)
+                .setPositiveButton(R.string.send, null)
     }
 
     override fun onShowDialog() {
@@ -54,22 +41,20 @@ class ColdLoadDialog : AlertDialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 val currenttext = etTransaction.text
                 //checks if text is blank. further validations can be added here
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = when { currenttext.isNotBlank() -> {true} else -> false }
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = currenttext.isNotBlank()
             }
 
         })
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOK() }
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { scanQR(this) }
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-        btnPaste.isEnabled = when { !ourClipboard.hasPrimaryClip() -> { false } else -> {true}}
+        btnPaste.isEnabled = ourClipboard.hasPrimaryClip()
         btnPaste.setOnClickListener {
             val clipdata = ourClipboard.primaryClip
             val cliptext = clipdata!!.getItemAt(0)
             etTransaction.setText(cliptext.text)
-
         }
     }
-
 
     // Receives the result of a QR scan.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
