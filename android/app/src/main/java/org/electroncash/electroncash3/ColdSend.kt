@@ -269,7 +269,6 @@ class SendColdContactsDialog : MenuDialog() {
     }
 }
 
-
 class ColdSendPasswordDialog : PasswordDialog<Unit>() {
     val coldsendDialog by lazy { targetFragment as ColdSendDialog }
     class Model : ViewModel() {
@@ -294,15 +293,12 @@ class ColdSendPasswordDialog : PasswordDialog<Unit>() {
 
     }
 
-
-
     override fun onPostExecute(result: Unit) {
         coldsendDialog.dismiss()
         copyToClipboard(model.tx.toString(), R.string.signed_transaction)
 
     }
 }
-
 
 private fun checkExpired(pr: PyObject) {
     if (pr.callAttr("has_expired").toBoolean()) {
