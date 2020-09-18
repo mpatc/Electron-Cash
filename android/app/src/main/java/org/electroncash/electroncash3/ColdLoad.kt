@@ -75,11 +75,11 @@ class ColdLoadDialog : AlertDialogFragment() {
         val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
             var message = result.get(1).toString()
             val reError = Regex("^error: (.*)")
-            val txError = Regex("txid")
+            val txSuccess = Regex("txid")
             if (message.contains(reError)) {
                 message = message.replace(reError, "$1")
             }
-            if (message.contains(txError)) {
+            if (message.contains(txSuccess)) {
                 toast(R.string.the_string, Toast.LENGTH_LONG)
             } else {
                 toast(message)
