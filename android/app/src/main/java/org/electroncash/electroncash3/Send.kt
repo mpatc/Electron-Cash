@@ -24,32 +24,50 @@ import kotlin.properties.Delegates.notNull
 val libPaymentRequest by lazy { libMod("paymentrequest") }
 
 val MIN_FEE = 1  // sat/byte
+var DONT_SEND = false
+
 
 
 class SendDialog : AlertDialogFragment() {
     class Model : ViewModel() {
         var paymentRequest: PyObject? = null
     }
+
     val model: Model by viewModels()
 
     init {
         if (daemonModel.wallet!!.callAttr("is_watching_only").toBoolean()) {
             throw ToastException(R.string.this_wallet_is)
         } else if (daemonModel.wallet!!.callAttr("get_receiving_addresses")
-                   .asList().isEmpty()) {
+                        .asList().isEmpty()) {
             // At least one receiving address is needed to call wallet.dummy_address.
             throw ToastException(
-                R.string.electron_cash_is_generating_your_addresses__please_wait_)
+                    R.string.electron_cash_is_generating_your_addresses__please_wait_)
         }
+
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        builder.setTitle(R.string.send)
-            .setView(R.layout.send)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(android.R.string.ok, null)
-            .setNeutralButton(R.string.qr_code, null)
+        if (arguments != null) {
+            DONT_SEND = arguments!!.getBoolean("unbroadcasted")
+        } else {
+            DONT_SEND = false
+        }
+        if (!DONT_SEND) {
+            builder.setTitle(R.string.send)
+                    .setView(R.layout.send)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setNeutralButton(R.string.qr_code, null)
+        } else {
+            builder.setTitle(R.string.sign)
+                    .setView(R.layout.send)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.sign, null)
+                    .setNeutralButton(R.string.qr_code, null)
+        }
     }
+
 
     override fun onShowDialog() {
         if (arguments != null) {
@@ -59,6 +77,9 @@ class SendDialog : AlertDialogFragment() {
                 etAmount.requestFocus()
             }
             arguments = null
+        }
+        if (DONT_SEND) {
+            toast("The DONTSEND flag is true")
         }
         setPaymentRequest(model.paymentRequest)
 
@@ -284,36 +305,47 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
     }
 
     override fun onPassword(password: String) {
-        val wallet = daemonModel.wallet!!
-        wallet.callAttr("sign_transaction", model.tx, password)
-        if (! daemonModel.isConnected()) {
-            throw ToastException(R.string.not_connected)
-        }
-        val pr = sendDialog.model.paymentRequest
-        val result = if (pr != null) {
-            checkExpired(pr)
-            val refundAddr = wallet.callAttr("get_receiving_addresses").asList().get(0)
-            pr.callAttr("send_payment", model.tx.toString(), refundAddr)
-        } else {
-            daemonModel.network.callAttr("broadcast_transaction", model.tx)
-        }.asList()
-
-        val success = result.get(0).toBoolean()
-        if (success) {
-            setDescription(model.tx.callAttr("txid").toString(), model.description)
-        } else {
-            var message = result.get(1).toString()
-            val reError = Regex("^error: (.*)")
-            if (message.contains(reError)) {
-                message = message.replace(reError, "$1")
+        if (!DONT_SEND) {
+            val wallet = daemonModel.wallet!!
+            wallet.callAttr("sign_transaction", model.tx, password)
+            if (!daemonModel.isConnected()) {
+                throw ToastException(R.string.not_connected)
             }
-            throw ToastException(message)
+            val pr = sendDialog.model.paymentRequest
+            val result = if (pr != null) {
+                checkExpired(pr)
+                val refundAddr = wallet.callAttr("get_receiving_addresses").asList().get(0)
+                pr.callAttr("send_payment", model.tx.toString(), refundAddr)
+            } else {
+                daemonModel.network.callAttr("broadcast_transaction", model.tx)
+            }.asList()
+
+            val success = result.get(0).toBoolean()
+            if (success) {
+                setDescription(model.tx.callAttr("txid").toString(), model.description)
+            } else {
+                var message = result.get(1).toString()
+                val reError = Regex("^error: (.*)")
+                if (message.contains(reError)) {
+                    message = message.replace(reError, "$1")
+                }
+                throw ToastException(message)
+            }
+        } else {
+            val wallet = daemonModel.wallet!!
+            wallet.callAttr("sign_transaction", model.tx, password)
         }
     }
 
     override fun onPostExecute(result: Unit) {
-        sendDialog.dismiss()
-        toast(R.string.payment_sent, Toast.LENGTH_SHORT)
+       if (!DONT_SEND) {
+           sendDialog.dismiss()
+           toast(R.string.payment_sent, Toast.LENGTH_SHORT)
+       } else {
+           sendDialog.dismiss()
+           copyToClipboard(model.tx.toString(), R.string.signed_transaction)
+
+       }
     }
 }
 

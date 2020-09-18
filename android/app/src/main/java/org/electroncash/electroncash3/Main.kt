@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.icu.util.BuddhistCalendar
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
@@ -233,7 +234,9 @@ class MainActivity : AppCompatActivity(R.layout.main) {
             }
             R.id.menuChangePassword -> showDialog(this, PasswordChangeDialog())
             R.id.menuShowSeed-> { showDialog(this, SeedPasswordDialog()) }
-            R.id.menuExportSigned-> { showDialog(this, ColdSendDialog()) }
+            R.id.menuExportSigned-> { showDialog(this, SendDialog().apply {
+                arguments = Bundle().apply {putBoolean("unbroadcasted", true)}
+            }) }
             R.id.menuLoadSigned-> { showDialog(this, ColdLoadDialog()) }
             R.id.menuRename -> showDialog(this, WalletRenameDialog().apply {
                 arguments = Bundle().apply { putString("walletName", daemonModel.walletName) }
