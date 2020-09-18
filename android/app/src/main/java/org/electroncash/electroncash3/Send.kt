@@ -301,8 +301,8 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
     }
 
     override fun onPassword(password: String) {
+        val wallet = daemonModel.wallet!!
         if (!DONT_SEND) {
-            val wallet = daemonModel.wallet!!
             wallet.callAttr("sign_transaction", model.tx, password)
             if (!daemonModel.isConnected()) {
                 throw ToastException(R.string.not_connected)
@@ -328,7 +328,6 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
                 throw ToastException(message)
             }
         } else {
-            val wallet = daemonModel.wallet!!
             wallet.callAttr("sign_transaction", model.tx, password)
         }
     }
