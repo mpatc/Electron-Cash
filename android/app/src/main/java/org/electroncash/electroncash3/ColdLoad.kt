@@ -73,14 +73,6 @@ class ColdLoadDialog : AlertDialogFragment() {
 
         val tx = etTransaction.text.toString()
         val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
-        val success = result.get(0).toBoolean()
-        if (success) {
-            toast(R.string.the_string, Toast.LENGTH_LONG)
-            dismiss()
-            //send to transactions
-            // because if they just broadcasted one, that's probably where they want to go
-            (activity as MainActivity).navBottom.selectedItemId = R.id.navTransactions
-        } else {
             var message = result.get(1).toString()
             val reError = Regex("^error: (.*)")
             val txError = Regex("txid")
@@ -94,6 +86,6 @@ class ColdLoadDialog : AlertDialogFragment() {
 
             }
             dismiss()
-        }
+
     }
 }
