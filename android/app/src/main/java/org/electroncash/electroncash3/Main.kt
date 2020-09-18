@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.icu.util.BuddhistCalendar
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
