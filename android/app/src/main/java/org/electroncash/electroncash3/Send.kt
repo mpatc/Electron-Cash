@@ -27,7 +27,6 @@ val MIN_FEE = 1  // sat/byte
 var DONT_SEND = false
 
 
-
 class SendDialog : AlertDialogFragment() {
     class Model : ViewModel() {
         var paymentRequest: PyObject? = null
@@ -77,9 +76,6 @@ class SendDialog : AlertDialogFragment() {
                 etAmount.requestFocus()
             }
             arguments = null
-        }
-        if (DONT_SEND) {
-            toast("The DONTSEND flag is true")
         }
         setPaymentRequest(model.paymentRequest)
 
@@ -348,7 +344,6 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
        }
     }
 }
-
 
 private fun checkExpired(pr: PyObject) {
     if (pr.callAttr("has_expired").toBoolean()) {
