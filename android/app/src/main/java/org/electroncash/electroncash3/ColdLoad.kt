@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.main.*
 
 // This provides a dialog to allow users to input a string, which is then broadcast
 // on the bitcoin cash network. Strings are not validated,
-// but broadcast_transaction2 should throw error which is toasted.
+// but broadcast_transaction should throw error which is toasted.
 // Valid transaction quickly show up in transactions.
 
 class ColdLoadDialog : AlertDialogFragment() {
@@ -69,13 +69,7 @@ class ColdLoadDialog : AlertDialogFragment() {
 
     fun onOK() {
         // try to send user input to network to be broadcast,
-        // this should work even if tx is not vaild transaction, but nothing happens
-//        try {
-//            val tx = etTransaction.text.toString()
-//            daemonModel.network.callAttr("broadcast_transaction", tx)
-//        } catch (e: ToastException) {
-//            e.show()
-//        }
+        // this should work even if tx is not vaild transaction, but error is toasted
 
         val tx = etTransaction.text.toString()
         val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
