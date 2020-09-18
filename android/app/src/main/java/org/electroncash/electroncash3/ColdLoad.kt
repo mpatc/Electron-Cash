@@ -70,17 +70,29 @@ class ColdLoadDialog : AlertDialogFragment() {
     fun onOK() {
         // try to send user input to network to be broadcast,
         // this should work even if tx is not vaild transaction, but nothing happens
-        try {
-            val tx = etTransaction.text.toString()
-            daemonModel.network.callAttr("broadcast_transaction", tx)
-        } catch (e: ToastException) {
-            e.show()
-        }
-        toast(R.string.the_string, Toast.LENGTH_LONG)
-        dismiss()
-        //send to transactions
-        // because if they just broadcasted one, that's probably where they want to go
-        (activity as MainActivity).navBottom.selectedItemId = R.id.navTransactions
+//        try {
+//            val tx = etTransaction.text.toString()
+//            daemonModel.network.callAttr("broadcast_transaction", tx)
+//        } catch (e: ToastException) {
+//            e.show()
+//        }
 
+        val tx = etTransaction.text.toString()
+        val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
+        val success = result.get(0).toBoolean()
+        if (success) {
+            toast(R.string.the_string, Toast.LENGTH_LONG)
+            dismiss()
+            //send to transactions
+            // because if they just broadcasted one, that's probably where they want to go
+            (activity as MainActivity).navBottom.selectedItemId = R.id.navTransactions
+        } else {
+            var message = result.get(1).toString()
+            val reError = Regex("^error: (.*)")
+            if (message.contains(reError)) {
+                message = message.replace(reError, "$1")
+            }
+            toast(message)
+        }
     }
 }
