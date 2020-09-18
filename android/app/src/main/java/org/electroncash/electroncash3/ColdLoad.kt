@@ -89,10 +89,17 @@ class ColdLoadDialog : AlertDialogFragment() {
         } else {
             var message = result.get(1).toString()
             val reError = Regex("^error: (.*)")
+            val txError = Regex("txid")
             if (message.contains(reError)) {
                 message = message.replace(reError, "$1")
             }
-            toast(message)
+            if (message.contains(txError)) {
+                toast(R.string.the_string, Toast.LENGTH_LONG)
+            } else {
+                toast(message)
+
+            }
+            dismiss()
         }
     }
 }
