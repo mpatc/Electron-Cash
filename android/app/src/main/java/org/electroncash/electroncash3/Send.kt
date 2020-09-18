@@ -59,7 +59,7 @@ class SendDialog : AlertDialogFragment() {
                     .setPositiveButton(android.R.string.ok, null)
                     .setNeutralButton(R.string.qr_code, null)
         } else {
-            builder.setTitle(R.string.sign)
+            builder.setTitle(R.string.sign_transaction)
                     .setView(R.layout.send)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(R.string.sign, null)
