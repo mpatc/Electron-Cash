@@ -83,7 +83,6 @@ class ColdLoadDialog : AlertDialogFragment() {
                 toast(R.string.the_string, Toast.LENGTH_LONG)
             } else {
                 toast(message)
-
             }
             dismiss()
 
