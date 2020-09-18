@@ -14,7 +14,8 @@ import kotlinx.android.synthetic.main.load.*
 import kotlinx.android.synthetic.main.main.*
 
 // This provides a dialog to allow users to input a string, which is then broadcast
-// on the bitcoin cash network. Strings are not validated, but broadcast_transaction2 should throw error which is toasted.
+// on the bitcoin cash network. Strings are not validated,
+// but broadcast_transaction2 should throw error which is toasted.
 // Valid transaction quickly show up in transactions.
 
 class ColdLoadDialog : AlertDialogFragment() {
@@ -48,7 +49,6 @@ class ColdLoadDialog : AlertDialogFragment() {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOK() }
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { scanQR(this) }
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-        btnPaste.isEnabled = ourClipboard.hasPrimaryClip()
         btnPaste.setOnClickListener {
             val clipdata = ourClipboard.primaryClip
             val cliptext = clipdata!!.getItemAt(0)
