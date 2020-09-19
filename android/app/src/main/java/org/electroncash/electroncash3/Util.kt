@@ -82,7 +82,7 @@ fun <T: DialogFragment> findDialog(activity: FragmentActivity, fragClass: KClass
         return null
     } else if (frag::class != fragClass) {
         throw ClassCastException(
-                "Expected ${fragClass.java.name}, got ${frag::class.java.name}")
+            "Expected ${fragClass.java.name}, got ${frag::class.java.name}")
     } else {
         @Suppress("UNCHECKED_CAST")
         return frag as T?
@@ -94,7 +94,7 @@ fun copyToClipboard(text: CharSequence, what: Int? = null) {
     @Suppress("DEPRECATION")
     (getSystemService(ClipboardManager::class)).text = text
     val message = if (what == null) app.getString(R.string.text_copied)
-    else app.getString(R.string._s_copied, app.getString(what))
+                  else app.getString(R.string._s_copied, app.getString(what))
     toast(message, Toast.LENGTH_SHORT)
 }
 
@@ -109,8 +109,8 @@ fun setupVerticalList(rv: RecyclerView) {
 
     // Dialog theme has listDivider set to null, so use the base app theme instead.
     rv.addItemDecoration(
-            DividerItemDecoration(ContextThemeWrapper(rv.context, R.style.AppTheme),
-                    DividerItemDecoration.VERTICAL))
+        DividerItemDecoration(ContextThemeWrapper(rv.context, R.style.AppTheme),
+                                                           DividerItemDecoration.VERTICAL))
 }
 
 
@@ -128,15 +128,15 @@ open class BoundAdapter<T: Any>(val layoutId: Int)
     }
 
     override fun getItemCount() =
-            list.size
+        list.size
 
     fun getItem(position: Int) =
-            list.get(position)
+        list.get(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoundViewHolder<T> {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
-                layoutInflater, layoutId, parent, false)
+            layoutInflater, layoutId, parent, false)
         return BoundViewHolder(binding)
     }
 
@@ -160,13 +160,13 @@ class MenuAdapter(context: Context, val menu: Menu)
         if (context === app) {
             // This resulted in white-on-white text on older API levels (e.g. 18).
             throw IllegalArgumentException(
-                    "Can't use application context: theme will not be applied to views")
+                "Can't use application context: theme will not be applied to views")
         }
         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     }
 
     constructor(context: Context, menuId: Int)
-            : this(context, inflateMenu(menuId))
+        : this(context, inflateMenu(menuId))
 
     override fun getItemId(position: Int): Long {
         return menu.getItem(position).itemId.toLong()
