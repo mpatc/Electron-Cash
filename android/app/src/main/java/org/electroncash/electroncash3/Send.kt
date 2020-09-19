@@ -31,7 +31,6 @@ class SendDialog : AlertDialogFragment() {
     class Model : ViewModel() {
         var paymentRequest: PyObject? = null
     }
-
     val model: Model by viewModels()
 
     init {
@@ -43,7 +42,6 @@ class SendDialog : AlertDialogFragment() {
             throw ToastException(
                     R.string.electron_cash_is_generating_your_addresses__please_wait_)
         }
-
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
@@ -66,7 +64,6 @@ class SendDialog : AlertDialogFragment() {
                     .setNeutralButton(R.string.qr_code, null)
         }
     }
-
 
     override fun onShowDialog() {
         if (arguments != null) {
