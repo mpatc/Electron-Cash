@@ -36,7 +36,7 @@ class AddressesFragment : Fragment(R.layout.addresses), MainFragment {
         val filterStatus = MutableLiveData<Int>().apply { value = R.id.filterAll }
     }
     val model: Model by viewModels()
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         btnType.setOnClickListener { showFilterDialog(FilterTypeDialog::class) }
         btnStatus.setOnClickListener { showFilterDialog(FilterStatusDialog::class) }
@@ -86,6 +86,7 @@ class AddressesFragment : Fragment(R.layout.addresses), MainFragment {
             R.id.filterUsed -> {
                 if (am.history.isEmpty() || am.balance != 0L) return false
             }
+            R.id.filterFrozen -> { if (!am.isFrozen) return false }
         }
         return true
     }
@@ -107,6 +108,10 @@ class AddressesAdapter(val activity: FragmentActivity)
 class AddressModel(val wallet: PyObject, val addr: PyObject) {
     fun toString(format: String) = addr.callAttr("to_${format}_string").toString()
 
+    fun toFreeze() = addr.callAttr("set_frozen_state", true)
+
+    fun toUnfreeze() = addr.callAttr("set_frozen_state", false)
+
     val status
         get() = app.getString(if (history.isEmpty()) R.string.unused
                               else if (balance != 0L) R.string.balance
@@ -125,6 +130,9 @@ class AddressModel(val wallet: PyObject, val addr: PyObject) {
 
     val isChange
         get() = wallet.callAttr("is_change", addr).toBoolean()
+
+    val isFrozen
+        get() = wallet.callAttr("is_frozen", addr).toBoolean()
 
     val description
         get() = wallet.callAttr("get_label", toString("storage")).toString()

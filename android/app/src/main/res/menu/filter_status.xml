@@ -18,5 +18,7 @@
     <item
         android:id="@+id/filterUnused"
         android:title="@string/unused"/>
-
+    <item
+        android:id="@+id/filterFrozen"
+        android:title="@string/frozen"/>
 </menu>
