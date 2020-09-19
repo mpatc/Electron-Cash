@@ -45,10 +45,10 @@ class SendDialog : AlertDialogFragment() {
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        if (arguments != null) {
-            DONT_SEND = arguments!!.getBoolean("unbroadcasted")
+        DONT_SEND = if (arguments != null) {
+            arguments!!.getBoolean("unbroadcasted")
         } else {
-            DONT_SEND = false
+            false
         }
         if (!DONT_SEND) {
             builder.setTitle(R.string.send)
