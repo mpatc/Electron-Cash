@@ -72,6 +72,9 @@ class ColdLoadDialog : AlertDialogFragment() {
         // this should work even if tx is not vaild transaction, but error is toasted
 
         val tx = etTransaction.text.toString()
+        if (!daemonModel.isConnected()) {
+            throw ToastException(R.string.not_connected)
+        }
         val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
             var message = result.get(1).toString()
             val reError = Regex("^error: (.*)")
