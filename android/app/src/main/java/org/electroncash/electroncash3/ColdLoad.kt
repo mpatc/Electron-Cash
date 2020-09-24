@@ -1,6 +1,5 @@
 package org.electroncash.electroncash3
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.text.Editable
@@ -11,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.load.*
-import kotlinx.android.synthetic.main.main.*
 
 // This provides a dialog to allow users to input a string, which is then broadcast
 // on the bitcoin cash network. Strings are not validated,
@@ -34,8 +32,6 @@ class ColdLoadDialog : AlertDialogFragment() {
 
     override fun onShowDialog() {
         super.onShowDialog()
-        val ourClipboard = getSystemService(ClipboardManager::class)
-
         etTransaction.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -44,15 +40,16 @@ class ColdLoadDialog : AlertDialogFragment() {
                 //checks if text is blank. further validations can be added here
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = currenttext.isNotBlank()
             }
-
         })
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOK() }
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { scanQR(this) }
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         btnPaste.setOnClickListener {
-            val clipdata = ourClipboard.primaryClip
-            val cliptext = clipdata!!.getItemAt(0)
-            etTransaction.setText(cliptext.text)
+            val clipdata = getSystemService(ClipboardManager::class).primaryClip
+            if (clipdata != null && clipdata.getItemCount() > 0) {
+                val cliptext = clipdata.getItemAt(0)
+                etTransaction.setText(cliptext.text)
+            }
         }
     }
 
