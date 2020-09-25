@@ -1,5 +1,6 @@
 package org.electroncash.electroncash3
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -11,6 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -36,7 +38,7 @@ class AddressesFragment : Fragment(R.layout.addresses), MainFragment {
         val filterStatus = MutableLiveData<Int>().apply { value = R.id.filterAll }
     }
     val model: Model by viewModels()
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         btnType.setOnClickListener { showFilterDialog(FilterTypeDialog::class) }
         btnStatus.setOnClickListener { showFilterDialog(FilterStatusDialog::class) }
@@ -126,6 +128,9 @@ class AddressModel(val wallet: PyObject, val addr: PyObject) {
     val isChange
         get() = wallet.callAttr("is_change", addr).toBoolean()
 
+    val isFrozen
+        get() = wallet.callAttr("is_frozen", addr).toBoolean()
+
     val description
         get() = wallet.callAttr("get_label", toString("storage")).toString()
 }
@@ -152,6 +157,7 @@ class AddressDialog() : AlertDialogFragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onShowDialog() {
         btnExplore.setOnClickListener {
             exploreAddress(activity!!, addrModel.addr)
@@ -159,11 +165,16 @@ class AddressDialog() : AlertDialogFragment() {
         btnCopy.setOnClickListener {
             copyToClipboard(addrModel.toString("full_ui"), R.string.address)
         }
-
+        btnFreeze.setOnClickListener {
+            toast("freeze button clicked", Toast.LENGTH_SHORT)
+        }
         showQR(imgQR, addrModel.toString("full_ui"))
         tvAddress.text = addrModel.toString("ui")
-        tvType.text = addrModel.type
-
+        if (addrModel.isFrozen) {
+            tvType.text = addrModel.type + R.string.__frozen
+        } else {
+            tvType.text = addrModel.type
+        }
         with (SpannableStringBuilder()) {
             append(addrModel.history.size.toString())
             if (!addrModel.history.isEmpty()) {

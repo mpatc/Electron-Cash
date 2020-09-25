@@ -11,6 +11,7 @@
 def _(s):
     return s
 
+_(", Frozen")
 _("Are you sure you want to delete your wallet \'%s\'?")
 _("BIP39 seed")
 _("Block explorer")
