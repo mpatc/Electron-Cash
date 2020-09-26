@@ -103,7 +103,6 @@ class ContactDialog : AlertDialogFragment() {
                     showDialog(activity!!, SendDialog().apply {
                         arguments = Bundle().apply {
                             putString("address", contact.addrUiString)
-                            putBoolean("unbroadcasted", false)
                         }
                     })
                     dismiss()

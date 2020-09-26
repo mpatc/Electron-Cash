@@ -27,9 +27,7 @@ class TransactionsFragment : Fragment(R.layout.transactions), MainFragment {
 
         btnSend.setOnClickListener {
             try {
-                showDialog(activity!!, SendDialog().apply {
-                    arguments = Bundle().apply {putBoolean("unbroadcasted", false)}
-                })
+                showDialog(activity!!, SendDialog())
             } catch (e: ToastException) { e.show() }
         }
         btnRequest.setOnClickListener { newRequest(activity!!) }
