@@ -37,10 +37,10 @@ class SendDialog : AlertDialogFragment() {
         if (daemonModel.wallet!!.callAttr("is_watching_only").toBoolean()) {
             throw ToastException(R.string.this_wallet_is)
         } else if (daemonModel.wallet!!.callAttr("get_receiving_addresses")
-                        .asList().isEmpty()) {
+                   .asList().isEmpty()) {
             // At least one receiving address is needed to call wallet.dummy_address.
             throw ToastException(
-                    R.string.electron_cash_is_generating_your_addresses__please_wait_)
+                R.string.electron_cash_is_generating_your_addresses__please_wait_)
         }
     }
 
@@ -330,6 +330,7 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
        }
     }
 }
+
 
 private fun checkExpired(pr: PyObject) {
     if (pr.callAttr("has_expired").toBoolean()) {
