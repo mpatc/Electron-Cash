@@ -39,15 +39,12 @@ class ColdLoadDialog : AlertDialogFragment() {
         etTransaction.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val currenttext = etTransaction.text
-                //checks if text is blank. further validations can be added here
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = currenttext.isNotBlank()
-            }
+            override fun afterTextChanged(s: Editable?) { updateUI() }
         })
+        updateUI()
+
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { onOK() }
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { scanQR(this) }
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         btnPaste.setOnClickListener {
             val clipdata = getSystemService(ClipboardManager::class).primaryClip
             if (clipdata != null && clipdata.getItemCount() > 0) {
@@ -55,6 +52,12 @@ class ColdLoadDialog : AlertDialogFragment() {
                 etTransaction.setText(cliptext.text)
             }
         }
+    }
+
+    private fun updateUI() {
+        val currenttext = etTransaction.text
+        //checks if text is blank. further validations can be added here
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = currenttext.isNotBlank()
     }
 
     // Receives the result of a QR scan.
