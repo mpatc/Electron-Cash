@@ -24,7 +24,6 @@ import kotlin.properties.Delegates.notNull
 val libPaymentRequest by lazy { libMod("paymentrequest") }
 
 val MIN_FEE = 1  // sat/byte
-var DONT_SEND = false
 
 
 class SendDialog : AlertDialogFragment() {
@@ -32,6 +31,10 @@ class SendDialog : AlertDialogFragment() {
         var paymentRequest: PyObject? = null
     }
     val model: Model by viewModels()
+
+    val unbroadcasted by lazy {
+        arguments?.getBoolean("unbroadcasted", false) ?: false
+    }
 
     init {
         if (daemonModel.wallet!!.callAttr("is_watching_only").toBoolean()) {
@@ -45,35 +48,29 @@ class SendDialog : AlertDialogFragment() {
     }
 
     override fun onBuildDialog(builder: AlertDialog.Builder) {
-        DONT_SEND = if (arguments != null) {
-            arguments!!.getBoolean("unbroadcasted", false)
-        } else {
-            false
-        }
-        if (!DONT_SEND) {
+        if (!unbroadcasted) {
             builder.setTitle(R.string.send)
-                    .setView(R.layout.send)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setNeutralButton(R.string.qr_code, null)
+                .setPositiveButton(R.string.send, null)
         } else {
             builder.setTitle(R.string.sign_transaction)
-                    .setView(R.layout.send)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.sign, null)
-                    .setNeutralButton(R.string.qr_code, null)
+                .setPositiveButton(R.string.sign, null)
         }
+        builder.setView(R.layout.send)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setNeutralButton(R.string.qr_code, null)
     }
 
-    override fun onShowDialog() {
+    override fun onFirstShowDialog() {
         if (arguments != null) {
             val address = arguments!!.getString("address")
             if (address != null) {
                 etAddress.setText(address)
                 etAmount.requestFocus()
             }
-            arguments = null
         }
+    }
+
+    override fun onShowDialog() {
         setPaymentRequest(model.paymentRequest)
 
         etAmount.addTextChangedListener(object : TextWatcher {
@@ -299,8 +296,8 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
 
     override fun onPassword(password: String) {
         val wallet = daemonModel.wallet!!
-        if (!DONT_SEND) {
-            wallet.callAttr("sign_transaction", model.tx, password)
+        wallet.callAttr("sign_transaction", model.tx, password)
+        if (!sendDialog.unbroadcasted) {
             if (!daemonModel.isConnected()) {
                 throw ToastException(R.string.not_connected)
             }
@@ -314,20 +311,16 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
             }
             checkBroadcastResult(result)
             setDescription(model.tx.callAttr("txid").toString(), model.description)
-        } else {
-            wallet.callAttr("sign_transaction", model.tx, password)
         }
     }
 
     override fun onPostExecute(result: Unit) {
-       if (!DONT_SEND) {
-           sendDialog.dismiss()
-           toast(R.string.payment_sent, Toast.LENGTH_SHORT)
-       } else {
-           sendDialog.dismiss()
-           copyToClipboard(model.tx.toString(), R.string.signed_transaction)
-
-       }
+        sendDialog.dismiss()
+        if (!sendDialog.unbroadcasted) {
+            toast(R.string.payment_sent, Toast.LENGTH_SHORT)
+        } else {
+            copyToClipboard(model.tx.toString(), R.string.signed_transaction)
+        }
     }
 }
 
