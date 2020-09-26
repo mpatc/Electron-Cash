@@ -11,6 +11,10 @@ import androidx.lifecycle.ViewModel
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.load.*
 
+
+val libTransaction by lazy { libMod("transaction") }
+
+
 // This provides a dialog to allow users to input a string, which is then broadcast
 // on the bitcoin cash network. Strings are not validated,
 // but broadcast_transaction should throw error which is toasted.
@@ -63,28 +67,16 @@ class ColdLoadDialog : AlertDialogFragment() {
         }
     }
 
-
     fun onOK() {
-        // try to send user input to network to be broadcast,
-        // this should work even if tx is not vaild transaction, but error is toasted
-
-        val tx = etTransaction.text.toString()
+        val tx = libTransaction.callAttr("Transaction", etTransaction.text.toString())
         if (!daemonModel.isConnected()) {
             throw ToastException(R.string.not_connected)
         }
-        val result = daemonModel.network.callAttr("broadcast_transaction", tx).asList()
-            var message = result.get(1).toString()
-            val reError = Regex("^error: (.*)")
-            val txSuccess = Regex("txid")
-            if (message.contains(reError)) {
-                message = message.replace(reError, "$1")
-            }
-            if (message.contains(txSuccess)) {
-                toast(R.string.the_string, Toast.LENGTH_LONG)
-            } else {
-                toast(message)
-            }
+        val result = daemonModel.network.callAttr("broadcast_transaction", tx)
+        try {
+            checkBroadcastResult(result)
+            toast(R.string.the_string, Toast.LENGTH_LONG)
             dismiss()
-
+        } catch (e: ToastException) { e.show() }
     }
 }

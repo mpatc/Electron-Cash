@@ -311,19 +311,9 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
                 pr.callAttr("send_payment", model.tx.toString(), refundAddr)
             } else {
                 daemonModel.network.callAttr("broadcast_transaction", model.tx)
-            }.asList()
-
-            val success = result.get(0).toBoolean()
-            if (success) {
-                setDescription(model.tx.callAttr("txid").toString(), model.description)
-            } else {
-                var message = result.get(1).toString()
-                val reError = Regex("^error: (.*)")
-                if (message.contains(reError)) {
-                    message = message.replace(reError, "$1")
-                }
-                throw ToastException(message)
             }
+            checkBroadcastResult(result)
+            setDescription(model.tx.callAttr("txid").toString(), model.description)
         } else {
             wallet.callAttr("sign_transaction", model.tx, password)
         }
@@ -344,5 +334,15 @@ class SendPasswordDialog : PasswordDialog<Unit>() {
 private fun checkExpired(pr: PyObject) {
     if (pr.callAttr("has_expired").toBoolean()) {
         throw ToastException(R.string.payment_request_has)
+    }
+}
+
+
+fun checkBroadcastResult(result: PyObject) {
+    val success = result.asList().get(0).toBoolean()
+    if (!success) {
+        var message = result.asList().get(1).toString()
+        message = message.replace(Regex("^error: (.*)"), "$1")
+        throw ToastException(message)
     }
 }
